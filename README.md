@@ -1,2 +1,2 @@
 # img-processor
-Test project to build an containerized image processor orchestrated by Kubernetes
+Test project to build a containerized image processor orchestrated by Kubernetes
