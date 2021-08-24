@@ -30,7 +30,7 @@ func ReceiveImage(r *http.Request) (image.Image, *multipart.FileHeader) {
 	return img, header
 }
 
-func ReturnImage(img image.Image, w http.ResponseWriter) {
+func SendImage(img image.Image, w http.ResponseWriter) {
 	buffer := new(bytes.Buffer)
 	if err := jpeg.Encode(buffer, img, nil); err != nil {
 		log.Println("unable to encode image.")

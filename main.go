@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -24,5 +25,6 @@ func main() {
 	router.HandleFunc("/processing/bw", BwDescribe).Methods("GET")
 	router.HandleFunc("/processing/bw", BwProcessing).Methods("POST")
 
+	fmt.Println("Server listening in localhost, port 8000")
 	log.Fatal(http.ListenAndServe(":8000", router))
 }
