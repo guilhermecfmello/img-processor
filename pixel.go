@@ -7,13 +7,12 @@ type Pixel struct {
 	a uint8
 }
 
-func (p Pixel) setPixelValuesFromUint32(r, g, b, a uint32) Pixel {
+func (p *Pixel) setPixelValuesFromUint32(r, g, b, a uint32) {
 	normalizedValues := _Uint32ToUint8([]uint32{r, g, b, a})
 	p.r = normalizedValues[0]
 	p.g = normalizedValues[1]
 	p.b = normalizedValues[2]
 	p.a = normalizedValues[3]
-	return p
 }
 
 func _Uint32ToUint8(numbers []uint32) []uint8 {

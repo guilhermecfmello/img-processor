@@ -18,19 +18,29 @@ func noneProcessing(w http.ResponseWriter, r *http.Request) {
 }
 
 func BwDescribe(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode("Convert an image to black and white channel")
+	json.NewEncoder(w).Encode("Convert an image to greyscale")
 }
 
 func BwProcessing(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Black and white route hit")
 
 	img, _ := ReceiveImage(r)
-
-	// TODO black and white convertion here
 	newImage, _ := _CreateNewProcessedImage(img, _PixelConvertionColorfulToBw)
 
 	SendImage(newImage, w)
+}
 
+func RedDescribe(w http.ResponseWriter, r *http.Request) {
+	json.NewEncoder(w).Encode("Convert an image to red channel")
+}
+
+func RedProcessing(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Black and white route hit")
+
+	img, _ := ReceiveImage(r)
+	newImage, _ := _CreateNewProcessedImage(img, _PixelConvertionColorfulToRead)
+
+	SendImage(newImage, w)
 }
 
 func _CreateNewProcessedImage(img image.Image, function func(p Pixel) Pixel) (image.Image, error) {
@@ -46,10 +56,9 @@ func _CreateNewProcessedImage(img image.Image, function func(p Pixel) Pixel) (im
 	for i := 0; i <= width; i++ {
 		for j := 0; j <= height; j++ {
 			r, g, b, a := img.At(i, j).RGBA()
+
 			originalPixel.setPixelValuesFromUint32(r, g, b, a)
-			fmt.Println("original pixel: ", originalPixel)
 			processedPixel = function(originalPixel)
-			// fmt.Println("i: ", i, "j: ", j, "pixel: ", processedPixel)
 			newImage.Set(i, j, color.RGBA{processedPixel.r, processedPixel.g, processedPixel.b, processedPixel.a})
 		}
 	}
@@ -60,14 +69,18 @@ func _CreateNewProcessedImage(img image.Image, function func(p Pixel) Pixel) (im
 func _PixelConvertionColorfulToBw(p Pixel) Pixel {
 	var newPixel Pixel
 	var average = p.r/3 + p.g/3 + p.b/3
-	// fmt.Println("original pixel: ", p)
 	newPixel.r = average
-	// newPixel.r |= newPixel.r << 8
 	newPixel.g = average
-	// newPixel.g |= newPixel.g << 8
 	newPixel.b = average
-	// newPixel.b |= newPixel.b << 8
 	newPixel.a = p.a
-	// newPixel.a |= newPixel.a << 8
+	return newPixel
+}
+
+func _PixelConvertionColorfulToRead(p Pixel) Pixel {
+	var newPixel Pixel
+	newPixel.r = p.r
+	newPixel.g = 0
+	newPixel.b = 0
+	newPixel.a = p.a
 	return newPixel
 }
