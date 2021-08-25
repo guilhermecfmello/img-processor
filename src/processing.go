@@ -35,14 +35,28 @@ func RedDescribe(w http.ResponseWriter, r *http.Request) {
 }
 
 func RedProcessing(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Black and white route hit")
+	fmt.Println("Red route hit")
 
 	img, _ := ReceiveImage(r)
-	newImage, _ := _CreateNewProcessedImage(img, _PixelConvertionColorfulToRead)
+	newImage, _ := _CreateNewProcessedImage(img, _PixelConvertionColorfulToRed)
 
 	SendImage(newImage, w)
 }
 
+func GreenDescribe(w http.ResponseWriter, r *http.Request) {
+	json.NewEncoder(w).Encode("Convert an image to green channel")
+}
+
+func GreenProcessing(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Green route hit")
+
+	img, _ := ReceiveImage(r)
+	newImage, _ := _CreateNewProcessedImage(img, _PixelConvertionColorfulToRed)
+
+	SendImage(newImage, w)
+}
+
+// Private functions
 func _CreateNewProcessedImage(img image.Image, function func(p Pixel) Pixel) (image.Image, error) {
 	bounds := img.Bounds()
 	width, height := bounds.Max.X, bounds.Max.Y
@@ -56,7 +70,6 @@ func _CreateNewProcessedImage(img image.Image, function func(p Pixel) Pixel) (im
 	for i := 0; i <= width; i++ {
 		for j := 0; j <= height; j++ {
 			r, g, b, a := img.At(i, j).RGBA()
-
 			originalPixel.setPixelValuesFromUint32(r, g, b, a)
 			processedPixel = function(originalPixel)
 			newImage.Set(i, j, color.RGBA{processedPixel.r, processedPixel.g, processedPixel.b, processedPixel.a})
@@ -76,11 +89,29 @@ func _PixelConvertionColorfulToBw(p Pixel) Pixel {
 	return newPixel
 }
 
-func _PixelConvertionColorfulToRead(p Pixel) Pixel {
+func _PixelConvertionColorfulToRed(p Pixel) Pixel {
 	var newPixel Pixel
 	newPixel.r = p.r
 	newPixel.g = 0
 	newPixel.b = 0
+	newPixel.a = p.a
+	return newPixel
+}
+
+func _PixelConvertionColorfulToGreen(p Pixel) Pixel {
+	var newPixel Pixel
+	newPixel.r = 0
+	newPixel.g = p.g
+	newPixel.b = 0
+	newPixel.a = p.a
+	return newPixel
+}
+
+func _PixelConvertionColorfulToBlue(p Pixel) Pixel {
+	var newPixel Pixel
+	newPixel.r = 0
+	newPixel.g = 0
+	newPixel.b = p.b
 	newPixel.a = p.a
 	return newPixel
 }
