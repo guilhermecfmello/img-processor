@@ -1,10 +1,19 @@
 package main
 
+import "image"
+
 type Pixel struct {
 	r uint8
 	g uint8
 	b uint8
 	a uint8
+}
+
+func GetPixelFromImage(img image.Image, x, y int) *Pixel {
+	var p Pixel
+	r, g, b, a := img.At(x, y).RGBA()
+	p.setPixelValuesFromUint32(r, g, b, a)
+	return &p
 }
 
 func (p *Pixel) setPixelValuesFromUint32(r, g, b, a uint32) {

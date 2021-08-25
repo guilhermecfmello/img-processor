@@ -8,6 +8,10 @@ import (
 	"net/http"
 )
 
+type printable interface {
+	toString() string
+}
+
 func noneDescribe(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode("None image processing is applied, only for tests")
 }
@@ -51,13 +55,34 @@ func GreenProcessing(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Green route hit")
 
 	img, _ := ReceiveImage(r)
-	newImage, _ := _CreateNewProcessedImage(img, _PixelConvertionColorfulToRed)
+	newImage, _ := _CreateNewProcessedImage(img, _PixelConvertionColorfulToGreen)
 
 	SendImage(newImage, w)
 }
 
+func BlueDescribe(w http.ResponseWriter, r *http.Request) {
+	json.NewEncoder(w).Encode("Convert an image to blue channel")
+}
+
+func BlueProcessing(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Blue route hit")
+
+	img, _ := ReceiveImage(r)
+	newImage, _ := _CreateNewProcessedImage(img, _PixelConvertionColorfulToBlue)
+
+	SendImage(newImage, w)
+}
+
+func HistogramEqualizer(img image.Image) {
+	// Generate Histogram
+	var histogram Histogram
+	histogram.Init(img)
+	// Normalize Histogram
+	// Calculate Accumulated Histogram
+}
+
 // Private functions
-func _CreateNewProcessedImage(img image.Image, function func(p Pixel) Pixel) (image.Image, error) {
+func _tmp(img image.Image, function func(p Pixel) Pixel) (image.Image, error) {
 	bounds := img.Bounds()
 	width, height := bounds.Max.X, bounds.Max.Y
 	// TODO, modularize the image synteshis
