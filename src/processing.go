@@ -73,7 +73,12 @@ func BlueProcessing(w http.ResponseWriter, r *http.Request) {
 	SendImage(newImage, w)
 }
 
-func HistogramEqualizer(img image.Image) {
+func HistogramEqualizer(w http.ResponseWriter, r *http.Request) {
+	img, _ := ReceiveImage(r)
+	_HistogramEqualizer(img)
+}
+
+func _HistogramEqualizer(img image.Image) {
 	// Generate Histogram
 	var histogram Histogram
 	histogram.Init(img)
@@ -82,7 +87,7 @@ func HistogramEqualizer(img image.Image) {
 }
 
 // Private functions
-func _tmp(img image.Image, function func(p Pixel) Pixel) (image.Image, error) {
+func _CreateNewProcessedImage(img image.Image, function func(p Pixel) Pixel) (image.Image, error) {
 	bounds := img.Bounds()
 	width, height := bounds.Max.X, bounds.Max.Y
 	// TODO, modularize the image synteshis
