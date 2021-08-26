@@ -4,6 +4,8 @@ WORKDIR /app
 
 COPY ./src/* ./
 
-RUN go build -o img-processor
+RUN go mod init guilhermecfmello/img-processor
+RUN go get github.com/gorilla/mux
+RUN go build -o img-processor && ls
 
-CMD [ "/img-processor" ]
+CMD [ "./img-processor" ]
