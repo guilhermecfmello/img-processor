@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: img-processor
+  labels:
+    app: graphic-computing
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: graphic-computing
+  template:
+    metadata:
+      labels:
+        app: graphic-computing
+    spec:
+      containers:
+      - name: img-processor-api
+        image: guilhermecfmello/img-processor
