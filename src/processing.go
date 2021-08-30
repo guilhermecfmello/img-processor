@@ -74,6 +74,8 @@ func BlueProcessing(w http.ResponseWriter, r *http.Request) {
 }
 
 func HistogramEqualizer(w http.ResponseWriter, r *http.Request) {
+	Log("Histogram Equalizer route hit")
+
 	img, _ := ReceiveImage(r)
 	_HistogramEqualizer(img)
 }
@@ -82,8 +84,12 @@ func _HistogramEqualizer(img image.Image) {
 	// Generate Histogram
 	var histogram Histogram
 	histogram.Init(img)
+	fmt.Print(histogram.r)
 	// Normalize Histogram
+	histogram.Normalize()
 	// Calculate Accumulated Histogram
+	histogram.Accumulate()
+	fmt.Print(histogram)
 }
 
 // Private functions
