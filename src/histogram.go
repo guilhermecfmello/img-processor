@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"image"
+	"image/color"
 )
 
 const RGBMAX uint = 256
@@ -56,12 +58,33 @@ func (histogram *Histogram) Accumulate() {
 	}
 }
 
-func (histogram *Histogram) GenerateEqualizedImage() image.Image {
+func (histogram *Histogram) GenerateEqualizedImage(img image.Image) image.Image {
 	upLeft := image.Point{0, 0}
 	lowRight := image.Point{histogram.width, histogram.height}
 	newImage := image.NewRGBA(image.Rectangle{upLeft, lowRight})
 
+	for i := 0; i <= histogram.width; i++ {
+		for j := 0; j <= histogram.height; j++ {
+			originalPixel := GetPixelFromImage(img, i, j)
+			fmt.Printf("\n[%v,%v]\n", i, j)
+			newPixel := _EqualizePixel(originalPixel, histogram)
+			newImage.Set(i, j, color.RGBA{newPixel.r, newPixel.g, newPixel.b, newPixel.a})
+		}
+	}
+
 	return newImage
+}
+
+func _EqualizePixel(originalPixel *Pixel, histogram *Histogram) *Pixel {
+	var newPixel Pixel
+	newPixel.r = uint8(histogram.rAccumulated[originalPixel.r] * float64(255))
+	newPixel.g = uint8(histogram.gAccumulated[originalPixel.g] * float64(255))
+	newPixel.b = uint8(histogram.bAccumulated[originalPixel.b] * float64(255))
+	newPixel.a = originalPixel.a
+	fmt.Println("\nold: R: ", originalPixel.r, "G: ", originalPixel.g, "B: ", originalPixel.b)
+	fmt.Printf("\thist.R: %v hist.G: %v, hist.B: %v\n", histogram.rAccumulated[originalPixel.r], histogram.gAccumulated[originalPixel.g], histogram.bAccumulated[originalPixel.b])
+	fmt.Println("new: R: ", newPixel.r, "G: ", newPixel.g, "B: ", newPixel.b)
+	return &newPixel
 }
 
 // TODO: Terminal print of histogram chart

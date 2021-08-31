@@ -77,19 +77,19 @@ func HistogramEqualizer(w http.ResponseWriter, r *http.Request) {
 	Log("Histogram Equalizer route hit")
 
 	img, _ := ReceiveImage(r)
-	_HistogramEqualizer(img)
+	newImage := _HistogramEqualizer(img)
+
+	SendImage(newImage, w)
 }
 
-func _HistogramEqualizer(img image.Image) {
-	// Generate Histogram
+func _HistogramEqualizer(img image.Image) image.Image {
 	var histogram Histogram
 	histogram.Init(img)
-	fmt.Print(histogram.r)
-	// Normalize Histogram
 	histogram.Normalize()
-	// Calculate Accumulated Histogram
 	histogram.Accumulate()
-	fmt.Print(histogram)
+	newImage := histogram.GenerateEqualizedImage(img)
+
+	return newImage
 }
 
 // Private functions
